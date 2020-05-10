@@ -1,0 +1,23 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <ItemGroup>
+    <ProjectReference Include="..\security-lab.shared\security-lab.shared.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <EmbeddedResource Include="..\certificate-store\certs\ca.cert.pem" Link="certificates\ca.cert.pem" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Include="..\certificate-store\intermediate\certs\server.pfx" Link="certificates\server.pfx">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>netcoreapp3.1</TargetFramework>
+    <RootNamespace>security_lab.server</RootNamespace>
+  </PropertyGroup>
+
+</Project>
