@@ -12,7 +12,6 @@ namespace security_lab.shared
     {
         public static RemoteCertificateValidationCallback CustomCertificateValidation()
         {
-            var ca = CertificateHelper.LoadCertificateAuthority();
             return (object sender, X509Certificate certificate, X509Chain chain, SslPolicyErrors sslPolicyErrors) =>
             {
                 return true;
