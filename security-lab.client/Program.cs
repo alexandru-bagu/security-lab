@@ -15,13 +15,13 @@ namespace security_lab.client
             var clientCrt = CertificateHelper.LoadCertificate("client.pfx", "client");
             using (var tcpClient = new TcpClient())
             {
-                tcpClient.Connect("localhost", Constants.Port);
+                tcpClient.Connect("security-lab", Constants.Port);
                 using (var stream = tcpClient.GetStream())
                 using (var sslStream = new SslStream(stream, false, CertificateHelper.CustomCertificateValidation()))
                 {
-                    sslStream.AuthenticateAsClient("server", new X509CertificateCollection(new[] { clientCrt }), true);
+                    sslStream.AuthenticateAsClient("security-lab", new X509CertificateCollection(new[] { clientCrt }), false);
 
-                    if (sslStream.IsAuthenticated)
+                    if (sslStream.IsAuthenticated && sslStream.IsEncrypted && sslStream.IsSigned)
                     {
                         var serverCrt = sslStream.RemoteCertificate as X509Certificate2;
                         using (var writer = new StreamWriter(sslStream))

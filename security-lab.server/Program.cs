@@ -26,15 +26,21 @@ namespace security_lab.server
                 {
                     try
                     {
-                        sslStream.AuthenticateAsServer(serverCrt, true, true);
-
-                        var clientCrt = sslStream.RemoteCertificate as X509Certificate2;
-                        using (var writer = new StreamWriter(sslStream))
-                        using (var reader = new StreamReader(sslStream))
+                        sslStream.AuthenticateAsServer(serverCrt, true, false);
+                        if (sslStream.IsAuthenticated && sslStream.IsEncrypted && sslStream.IsSigned)
                         {
-                            writer.WriteLine("Hi!");
-                            writer.Flush();
-                            Console.WriteLine(clientCrt.GetNameInfo(X509NameType.SimpleName, false) + " says " + reader.ReadLine());
+                            var clientCrt = sslStream.RemoteCertificate as X509Certificate2;
+                            using (var writer = new StreamWriter(sslStream))
+                            using (var reader = new StreamReader(sslStream))
+                            {
+                                writer.WriteLine("Hi!");
+                                writer.Flush();
+                                Console.WriteLine(clientCrt.GetNameInfo(X509NameType.SimpleName, false) + " says " + reader.ReadLine());
+                            }
+                        }
+                        else
+                        {
+                            Console.WriteLine(remoteCertificate.Subject + " signed by " + remoteCertificate.Issuer + " - seems valid but connection is not encrypted!");
                         }
                     }
                     catch (Exception ex)

@@ -15,18 +15,14 @@ namespace security_lab.shared
             return (object sender, X509Certificate certificate, X509Chain chain, SslPolicyErrors sslPolicyErrors) =>
             {
                 callback?.Invoke(new X509Certificate2(certificate.GetRawCertData()));
-                using (X509Chain customChain = new X509Chain()
+                if (sslPolicyErrors == SslPolicyErrors.None) return true; //signed certificate by main-stream CA
+                if (sslPolicyErrors == SslPolicyErrors.RemoteCertificateChainErrors)
                 {
-                    ChainPolicy = 
-                    { 
-                        VerificationFlags = X509VerificationFlags.AllowUnknownCertificateAuthority, 
-                        RevocationMode = X509RevocationMode.NoCheck
-                    }
-                })
-                {
-                    customChain.ChainPolicy.ExtraStore.Add(ca);
-                    return customChain.Build(certificate as X509Certificate2);
+                    chain.ChainPolicy.ExtraStore.Add(ca);//add our root certificate
+                    chain.ChainPolicy.VerificationFlags = X509VerificationFlags.AllowUnknownCertificateAuthority; //allow our root certificate
+                    return chain.Build(certificate as X509Certificate2);
                 }
+                return false;
             };
         }
 

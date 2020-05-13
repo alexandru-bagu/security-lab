@@ -1,1 +1,1 @@
-https://jamielinux.com/docs/
+https://jamielinux.com/docs/openssl-certificate-authority/

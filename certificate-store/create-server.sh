@@ -10,7 +10,9 @@ openssl req -config root.cnf \
       -passin pass:$CERT_PASSWORD -key intermediate/private/$NAME.key.pem \
       -new -sha256 \
 	  -subj "//C=RO\ST=Iasi\O=Security Lab\OU=IT\CN=$1" \
+	  -addext "subjectAltName = DNS:$1" \
 	  -out intermediate/csr/$NAME.csr.pem
+#rm -rf $tmp
 	  
 openssl ca -config root.cnf \
       -extensions server_cert -days 375 -notext -md sha256 \
