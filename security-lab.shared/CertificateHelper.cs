@@ -16,11 +16,14 @@ namespace security_lab.shared
             {
                 callback?.Invoke(new X509Certificate2(certificate.GetRawCertData()));
                 if (sslPolicyErrors == SslPolicyErrors.None) return true; //signed certificate by main-stream CA
-                if (sslPolicyErrors == SslPolicyErrors.RemoteCertificateChainErrors)
+
+                using (var customChain = new X509Chain())
                 {
-                    chain.ChainPolicy.ExtraStore.Add(ca);//add our root certificate
-                    chain.ChainPolicy.VerificationFlags = X509VerificationFlags.AllowUnknownCertificateAuthority; //allow our root certificate
-                    return chain.Build(certificate as X509Certificate2);
+                    customChain.ChainPolicy.VerificationFlags = X509VerificationFlags.AllowUnknownCertificateAuthority;
+                    customChain.ChainPolicy.RevocationMode = X509RevocationMode.NoCheck;
+                    customChain.ChainPolicy.ExtraStore.Add(ca);//add our root certificate
+                    var result = customChain.Build(certificate as X509Certificate2);
+                    return result;
                 }
                 return false;
             };
